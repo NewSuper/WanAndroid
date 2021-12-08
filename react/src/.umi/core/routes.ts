@@ -12,6 +12,16 @@ export function getRoutes() {
     "component": require('@/pages/Hello.js').default
   },
   {
+    "path": "/LifeCycle",
+    "exact": true,
+    "component": require('@/pages/LifeCycle.js').default
+  },
+  {
+    "path": "/List",
+    "exact": true,
+    "component": require('@/pages/List.js').default
+  },
+  {
     "path": "/Show",
     "exact": true,
     "component": require('@/pages/Show.js').default
