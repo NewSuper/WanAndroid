@@ -22,6 +22,11 @@ export function getRoutes() {
     "component": require('@/pages/List.js').default
   },
   {
+    "path": "/ListEffect",
+    "exact": true,
+    "component": require('@/pages/ListEffect.js').default
+  },
+  {
     "path": "/ListOld",
     "exact": true,
     "component": require('@/pages/ListOld.js').default
