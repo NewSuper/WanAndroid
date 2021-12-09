@@ -1,6 +1,7 @@
 // @ts-nocheck
 import './core/polyfill';
 import '@@/core/devScripts';
+import '../global.tsx';
 import { plugin } from './core/plugin';
 import './core/pluginRegister';
 import { createHistory } from './core/history';
@@ -9,7 +10,9 @@ import { renderClient } from 'E:/start_react/react/node_modules/@umijs/renderer-
 import { getRoutes } from './core/routes';
 
 
-
+import '../global.less';
+import { _onCreate } from './plugin-locale/locale';
+_onCreate();
 
 const getClientRender = (args: { hot?: boolean; routes?: any[] } = {}) => plugin.applyPlugins({
   key: 'render',
@@ -23,8 +26,8 @@ const getClientRender = (args: { hot?: boolean; routes?: any[] } = {}) => plugin
         plugin,
         history: createHistory(args.hot),
         isServer: process.env.__IS_SERVER,
+        dynamicImport: true,
         rootElement: 'root',
-        defaultTitle: ``,
       },
     });
     return renderClient(opts);
