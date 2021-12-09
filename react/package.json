@@ -4,7 +4,10 @@
   "main": "index.js",
   "license": "MIT",
   "devDependencies": {
-    "umi": "^3.5.20",
-    "@umijs/preset-react": "^1"
+    "@umijs/preset-react": "^1",
+    "umi": "^3.5.20"
+  },
+  "dependencies": {
+    "antd": "^4.17.2"
   }
 }

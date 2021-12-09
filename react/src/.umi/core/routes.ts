@@ -7,34 +7,9 @@ import { plugin } from './plugin';
 export function getRoutes() {
   const routes = [
   {
-    "path": "/Hello",
-    "exact": true,
-    "component": require('@/pages/Hello.js').default
-  },
-  {
-    "path": "/LifeCycle",
-    "exact": true,
-    "component": require('@/pages/LifeCycle.js').default
-  },
-  {
-    "path": "/List",
-    "exact": true,
-    "component": require('@/pages/List.js').default
-  },
-  {
-    "path": "/ListEffect",
-    "exact": true,
-    "component": require('@/pages/ListEffect.js').default
-  },
-  {
-    "path": "/ListOld",
-    "exact": true,
-    "component": require('@/pages/ListOld.js').default
-  },
-  {
-    "path": "/Show",
-    "exact": true,
-    "component": require('@/pages/Show.js').default
+    "path": "/",
+    "component": require('E:/start_react/react/src/layouts').default,
+    "exact": true
   }
 ];
 

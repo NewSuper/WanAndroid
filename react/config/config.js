@@ -1,10 +1,14 @@
 export default {
     dva: {},
-    antd: {}
-
+    antd: {},
 //    plugins: [
 //        ['umi-plugin-react',{
-//          //暂时没有
+//              dva: true,
+//              antd: true
 //        }]
-//    ]
+//    ],
+    routes: [{
+      path : '/',
+      component: '../layouts'
+    }]
 };
