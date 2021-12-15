@@ -8,7 +8,7 @@ import { ContainerQuery } from 'react-container-query';
 import classNames from 'classnames';
 import pathToRegexp from 'path-to-regexp';
 import { enquireScreen, unenquireScreen } from 'enquire-js';
-import { formatMessage } from 'umi/locale';
+import { formatMessage } from 'umi';
 import SiderMenu from '@/components/SiderMenu';
 import Authorized from '@/utils/Authorized';
 import SettingDrawer from '@/components/SettingDrawer';
@@ -20,6 +20,7 @@ import Exception403 from '../pages/Exception/403';
 
 const { Content } = Layout;
 
+// Conversion router to menu.
 function formatter(data, parentAuthority, parentName) {
   return data
     .map(item => {
@@ -79,168 +80,217 @@ const query = {
 };
 
 class BasicLayout extends React.PureComponent {
+  constructor(props) {
+    super(props);
+    this.getPageTitle = memoizeOne(this.getPageTitle);
+    this.getBreadcrumbNameMap = memoizeOne(this.getBreadcrumbNameMap, isEqual);
+    this.breadcrumbNameMap = this.getBreadcrumbNameMap();
+    this.matchParamsPath = memoizeOne(this.matchParamsPath, isEqual);
+  }
 
-    constructor(props) {
-      super(props);
-      this.getPageTitle = memoizeOne(this.getPageTitle);
-      this.getBreadcrumbNameMap = memoizeOne(this.getBreadcrumbNameMap, isEqual);
-      this.breadcrumbNameMap = this.getBreadcrumbNameMap();
-      this.matchParamsPath = memoizeOne(this.matchParamsPath, isEqual);
-    }
+  state = {
+    rendering: true,
+    isMobile: false,
+    menuData: this.getMenuData(),
+  };
 
-    state ={
-      rendering : true,
-      isMobile: false,
-      menuData: this.getMenuData(),
-    };
-
-    componentDidMount() {
-      const { dispatch } = this.props;
-      dispatch ({
-        type: 'user/fetchCurrent',
+  componentDidMount() {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'user/fetchCurrent',
+    });
+    dispatch({
+      type: 'setting/getSetting',
+    });
+    this.renderRef = requestAnimationFrame(() => {
+      this.setState({
+        rendering: false,
       });
-      dispatch({
-        type: 'setting/getSetting',
-      });
-      this.renderRef = requestAnimationFrame(() => {
+    });
+    this.enquireHandler = enquireScreen(mobile => {
+      const { isMobile } = this.state;
+      if (isMobile !== mobile) {
         this.setState({
-          rendering: false,
+          isMobile: mobile,
         });
-      });
-      this.enquireHandler = enquireScreen(mobile => {
-        const { isMobile }  = this.props;
-        if(isMobile != mobile) {
-          this.setState({
-            isMobile : mobile,
-          });
+      }
+    });
+  }
+
+  componentDidUpdate(preProps) {
+    // After changing to phone mode,
+    // if collapsed is true, you need to click twice to display
+    this.breadcrumbNameMap = this.getBreadcrumbNameMap();
+    const { isMobile } = this.state;
+    const { collapsed } = this.props;
+    if (isMobile && !preProps.isMobile && !collapsed) {
+      this.handleMenuCollapse(false);
+    }
+  }
+
+  componentWillUnmount() {
+    cancelAnimationFrame(this.renderRef);
+    unenquireScreen(this.enquireHandler);
+  }
+
+  getContext() {
+    const { location } = this.props;
+    return {
+      location,
+      breadcrumbNameMap: this.breadcrumbNameMap,
+    };
+  }
+
+  getMenuData() {
+    const {
+      route: { routes },
+    } = this.props;
+    return memoizeOneFormatter(routes);
+  }
+
+  /**
+   * 获取面包屑映射
+   * @param {Object} menuData 菜单配置
+   */
+  getBreadcrumbNameMap() {
+    const routerMap = {};
+    const mergeMenuAndRouter = data => {
+      data.forEach(menuItem => {
+        if (menuItem.children) {
+          mergeMenuAndRouter(menuItem.children);
         }
+        // Reduce memory usage
+        routerMap[menuItem.path] = menuItem;
       });
-    }
+    };
+    mergeMenuAndRouter(this.getMenuData());
+    return routerMap;
+  }
 
-    componentDidUpdate(preProps) {
-      this.breadcrumbNameMap = this.getBreadcrumbNameMap();
-      const { isMobile } = this.state;
-      const { collapsed } = this.props;
-      if(isMobile && !preProps.isMobile && !collapsed){
-        this.handleMenuCollapse(false);
-      }
-    }
+  matchParamsPath = pathname => {
+    const pathKey = Object.keys(this.breadcrumbNameMap).find(key =>
+      pathToRegexp(key).test(pathname)
+    );
+    return this.breadcrumbNameMap[pathKey];
+  };
 
-    componentWillUnmount(){
-      cancelAnimationFrame(this.renderRef);
-      unenquireScreen(this.enquireHandler);
-    }
+  getPageTitle = pathname => {
+    const currRouterData = this.matchParamsPath(pathname);
 
-    getContext(){
-      const { location } = this.props;
+    if (!currRouterData) {
+      return '好客租房管理系统';
+    }
+    const message = formatMessage({
+      id: currRouterData.locale || currRouterData.name,
+      defaultMessage: currRouterData.name,
+    });
+    return `${message} - 好客租房管理系统`;
+  };
+
+  getLayoutStyle = () => {
+    const { isMobile } = this.state;
+    const { fixSiderbar, collapsed, layout } = this.props;
+    if (fixSiderbar && layout !== 'topmenu' && !isMobile) {
       return {
-        location,
-        breadcrumbNameMap: this.breadcrumbNameMap;
+        paddingLeft: collapsed ? '80px' : '256px',
       };
     }
+    return null;
+  };
 
-    getMenuData(){
-      const {
-        route: { routes },
-      } = this.props;
-      return memoizeOneFormatter(routes);
-    }
-
-    getBreadcrumbNameMap(){
-      const routerMap = {};
-      const mergeMenuAndRouter = data => {
-        data.forEach(menuItem => {
-          if(menuItem.children){
-            mergeMenuAndRouter(menuItem.children);
-          }
-          routerMap[menuItem.path]  = menuItem;
-        });
-      };
-      mergeMenuAndRouter(this.getMenuData());
-      return routerMap;
-    }
-
-    matchParamsPath = pathname =>{
-      const pathKey = Object.keys(this.breadcrumbNameMap).find(key =>
-        pathToRegexp(key).test(pathname));
-        return this.breadcrumbNameMap[pathKey];
+  getContentStyle = () => {
+    const { fixedHeader } = this.props;
+    return {
+      margin: '24px 24px 0',
+      paddingTop: fixedHeader ? 64 : 0,
     };
+  };
 
-    getPageTitle = pathname =>{
-      const currRouterData = this.matchParamsPath(pathname);
+  handleMenuCollapse = collapsed => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'global/changeLayoutCollapsed',
+      payload: collapsed,
+    });
+  };
 
-      if(!currRouterData) {
-        return '好客租房管理系统';
-      }
-      const message = formatMessage({
-        id: currRouterData.locale || currRouterData.name;
-        defaultMessage: currRouterData.name,
-      });
-      return `${message} - 好客租房管理系统`;
-    };
-
-    getLayoutStyle = () =>{
-      const { isMobile } = this.state;
-      const { fixSiderbar,collapsed,layout } = this.props;
-      if(fixSiderbar && layout !== 'topmenu' && !isMobile){
-        return {
-          paddingLeft: collapsed ? '80px': '256px',
-        };
-      }
+  renderSettingDrawer() {
+    // Do not render SettingDrawer in production
+    // unless it is deployed in preview.pro.ant.design as demo
+    const { rendering } = this.state;
+    if ((rendering || process.env.NODE_ENV === 'production') && APP_TYPE !== 'site') {
       return null;
-    };
+    }
+    return <SettingDrawer />;
+  }
 
-    getContentStyle = ()=>{
-       const { fixedHeader } = this.props;
-       return {
-         margin: '24px 24px 0',
-         paddingTop: fixedHeader ? 64:0;
-       };
-    };
+  render() {
+    const {
+      navTheme,
+      layout: PropsLayout,
+      children,
+      location: { pathname },
+    } = this.props;
+    const { isMobile, menuData } = this.state;
+    const isTop = PropsLayout === 'topmenu';
+    const routerConfig = this.matchParamsPath(pathname);
+    const layout = (
+      <Layout>
+        {isTop && !isMobile ? null : (
+          <SiderMenu
+            logo={logo}
+            Authorized={Authorized}
+            theme={navTheme}
+            onCollapse={this.handleMenuCollapse}
+            menuData={menuData}
+            isMobile={isMobile}
+            {...this.props}
+          />
+        )}
+        <Layout
+          style={{
+            ...this.getLayoutStyle(),
+            minHeight: '100vh',
+          }}
+        >
+          <Header
+            menuData={menuData}
+            handleMenuCollapse={this.handleMenuCollapse}
+            logo={logo}
+            isMobile={isMobile}
+            {...this.props}
+          />
+          <Content style={this.getContentStyle()}>
+            <Authorized
+              authority={routerConfig && routerConfig.authority}
+              noMatch={<Exception403 />}
+            >
+              {children}
+            </Authorized>
+          </Content>
+          <Footer />
+        </Layout>
+      </Layout>
+    );
+    return (
+      <React.Fragment>
+        <DocumentTitle title={this.getPageTitle(pathname)}>
+          <ContainerQuery query={query}>
+            {params => (
+              <Context.Provider value={this.getContext()}>
+                <div className={classNames(params)}>{layout}</div>
+              </Context.Provider>
+            )}
+          </ContainerQuery>
+        </DocumentTitle>
+        {this.renderSettingDrawer()}
+      </React.Fragment>
+    );
+  }
+}
 
-    handleMenuCollapse = collapsed =>{
-      const { dispatch } = this.props;
-      dispatch({
-        type: 'global/changeLayoutCollapsed',
-        payload: collapsed,
-      });
-    };
-
-   renderSettingDrawer(){
-     const { rendering } = this.state;
-     if((rendering || props.env.NODE_ENV ==='production') && APP_TYPE !== 'site'){
-       return null;
-     }
-     return <SettingDrawer/>;
-   }
-
-   render(){
-     const {
-       navTheme,
-       layout: PropsLayout,
-       children,
-       location: { pathname},
-     }= this.props;
-     const {isMobile,menuData} = this.state;
-     const isTop =PropsLayout
-   }
-
-};
-export default BasicLayout;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+export default connect(({ global, setting }) => ({
+  collapsed: global.collapsed,
+  layout: setting.layout,
+  ...setting,
+}))(BasicLayout);

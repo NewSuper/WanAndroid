@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react';
-import { formatMessage } from 'umi/locale';
-import Link from 'umi/link';
+import { formatMessage } from 'umi';
+import { Link } from 'umi';
 import { Icon } from 'antd';
 import GlobalFooter from '@/components/GlobalFooter';
 import SelectLang from '@/components/SelectLang';
@@ -27,7 +27,7 @@ const links = [
 
 const copyright = (
   <Fragment>
-    Copyright <Icon type="copyright" /> 2022 蚂蚁金服体验技术部出品
+    Copyright <Icon type="copyright" /> 2018 蚂蚁金服体验技术部出品
   </Fragment>
 );
 

@@ -81,9 +81,9 @@
     "stylelint": "^9.4.0",
     "stylelint-config-prettier": "^4.0.0",
     "stylelint-config-standard": "^18.0.0",
-    "umi": "^2.1.2",
+    "umi": "^3.5.20",
     "umi-plugin-ga": "^1.1.3",
-    "umi-plugin-react": "^1.1.1"
+    "@umijs/preset-react": "^1"
   },
   "optionalDependencies": {
     "puppeteer": "^1.9.0"
@@ -108,5 +108,7 @@
     "hooks": {
       "pre-commit": "npm run lint-staged"
     }
-  }
+  },
+  "main": "index.js",
+  "license": "MIT"
 }

@@ -1,15 +1,15 @@
-import { queryNotices }from '@/service/api';
+import { queryNotices } from '@/services/api';
 
 export default {
-  namespace: 'global';
+  namespace: 'global',
 
-  state :{
-    collapsed : false,
+  state: {
+    collapsed: false,
     notices: [],
   },
 
   effects: {
-    *fetchNotices(_,{call,put}){
+    *fetchNotices(_, { call, put }) {
       const data = yield call(queryNotices);
       yield put({
         type: 'saveNotices',
@@ -20,7 +20,7 @@ export default {
         payload: data.length,
       });
     },
-    *clearNotices({ payload },{put,select }){
+    *clearNotices({ payload }, { put, select }) {
       yield put({
         type: 'saveClearedNotices',
         payload,
@@ -28,38 +28,40 @@ export default {
       const count = yield select(state => state.global.notices.length);
       yield put({
         type: 'user/changeNotifyCount',
-        payload:count,
+        payload: count,
       });
     },
   },
 
-  reducers:{
-    changeLayoutCollapsed(state,{payload}){
-      return{
+  reducers: {
+    changeLayoutCollapsed(state, { payload }) {
+      return {
         ...state,
-        collapsed:payload,
+        collapsed: payload,
       };
     },
-    saveNotices(state,{payload}){
-      return{
-       ...state,
-       notices: payload,
+    saveNotices(state, { payload }) {
+      return {
+        ...state,
+        notices: payload,
       };
     },
-    saveClearedNotices(state,{payload}){
-      return{
+    saveClearedNotices(state, { payload }) {
+      return {
         ...state,
-        notices:state.notices.filter(item=> item.type !== payload),
+        notices: state.notices.filter(item => item.type !== payload),
       };
     },
   },
-  subscriptions:{
-    setup({history}){
-      return history.listen(({pathName,search }) =>{
-        if(typeof window.ga !== 'undefined'){
-          window.ga('send','pageview',pathName+search);
+
+  subscriptions: {
+    setup({ history }) {
+      // Subscribe history(url) change, trigger `load` action if pathname is `/`
+      return history.listen(({ pathname, search }) => {
+        if (typeof window.ga !== 'undefined') {
+          window.ga('send', 'pageview', pathname + search);
         }
       });
-    };
+    },
   },
 };

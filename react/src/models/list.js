@@ -1,37 +1,35 @@
-import { queryFakeList,removeFakeList,addFakeList,updateFakeList } from '@/services/api';
+import { queryFakeList, removeFakeList, addFakeList, updateFakeList } from '@/services/api';
 
-export default{
+export default {
   namespace: 'list',
 
-  state:{
+  state: {
     list: [],
   },
 
-  effects:{
-    *fetch({payload},{call,put}){
-      const response = yield call(queryFakeList,payload);
+  effects: {
+    *fetch({ payload }, { call, put }) {
+      const response = yield call(queryFakeList, payload);
       yield put({
         type: 'queryList',
-        payload: Array.isArray(response)? response: [];
+        payload: Array.isArray(response) ? response : [],
       });
     },
-
-    *appendFetch({payload},{call ,put}){
-      const response = yield call(queryFakeList,payload);
+    *appendFetch({ payload }, { call, put }) {
+      const response = yield call(queryFakeList, payload);
       yield put({
         type: 'appendList',
-        payload: Array .isArray(response)? response:[],
+        payload: Array.isArray(response) ? response : [],
       });
     },
-
-    *submit({payload},{call,put}){
+    *submit({ payload }, { call, put }) {
       let callback;
-      if(payload.id){
-        callback = Object.keys(payload).length ===1 ? removeFakeList: updateFakeList;
-      }else{
-       callback = addFakeList;
+      if (payload.id) {
+        callback = Object.keys(payload).length === 1 ? removeFakeList : updateFakeList;
+      } else {
+        callback = addFakeList;
       }
-      const response = yield call(callback,payload);
+      const response = yield call(callback, payload); // post
       yield put({
         type: 'queryList',
         payload: response,
@@ -39,18 +37,17 @@ export default{
     },
   },
 
-  reducers:{
-    queryList(state,action){
-      return{
+  reducers: {
+    queryList(state, action) {
+      return {
         ...state,
         list: action.payload,
       };
     },
-
-    appendList(state,action){
-      return{
+    appendList(state, action) {
+      return {
         ...state,
-        list: state.list.concat(action.payload);
+        list: state.list.concat(action.payload),
       };
     },
   },
