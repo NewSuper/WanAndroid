@@ -1,0 +1,17 @@
+rootProject.name = "WanAndroid"
+include ':plugin-lifecycle'
+include ':library_db'
+include ':module-login'
+include ':library_aop'
+include ':library_common'
+include ':module-web'
+include ':module-mine'
+include ':module-square'
+include ':module-offcial'
+include ':library_network'
+include ':module-project'
+include ':module-home'
+include ':library_widget'
+include ':library_base'
+include ':app'
+
