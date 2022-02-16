@@ -13,6 +13,7 @@ import com.test.library_base.BaseApplication;
 import com.test.library_base.loadsir.EmptyCallback;
 import com.test.library_base.loadsir.ErrorCallback;
 import com.test.library_base.loadsir.LoadingCallback;
+import com.test.library_db.DbUtil;
 
 public class CommonModuleInit implements IModuleInit {
     @Override

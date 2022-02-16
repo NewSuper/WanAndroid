@@ -14,7 +14,7 @@ public class LogUtil {
 
     public static void logSplit(String explain, String message, int i) {
         //TODO 添加非debug下不打印日志
-        //if (!BuildConfig.DEBUG) return;
+        if (!BuildConfig.DEBUG) return;
         if (i > 10) return;
         if (message.length() <= logSubLenth) {
             Log.i(explain, explain + i + "：     " + message);
