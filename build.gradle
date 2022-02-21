@@ -18,7 +18,7 @@ allprojects {
     repositories {
         google()
         jcenter()
-
+        //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
         maven {
             url "https://jitpack.io"
         }
