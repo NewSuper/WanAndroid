@@ -1,13 +1,13 @@
-package com.test.library_base.utils;
+package com.test.home;
 
 
 import android.text.TextUtils;
 
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
 import com.chad.library.adapter.base.viewholder.BaseViewHolder;
-import com.test.library_base.R;
 import com.test.library_base.constant.C;
 import com.test.library_base.pojo.ArticleBean;
+import com.test.library_base.utils.GlideUtil;
 import com.test.library_base.widget.shinebtn.ShineButton;
 
 import org.jetbrains.annotations.NotNull;
@@ -30,7 +30,6 @@ public class RvAdapterArticleList extends BaseMultiItemQuickAdapter<ArticleBean,
         addItemType(C.ARTICLE_ITEM_TEXT, R.layout.rv_item_article_text);
         addItemType(C.ARTICLE_ITEM_TEXT_PIC, R.layout.rv_item_article_text_pic);
         addChildClickViewIds(R.id.ivCollect);
-
     }
 
     @Override
