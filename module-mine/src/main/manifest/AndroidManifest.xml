@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.test.mine">
+    <application
+        android:name=".MineApp"
+        android:allowBackup="true"
+        android:icon="@mipmap/logo"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/logo"
+        android:theme="@style/AppWelcome"
+        android:usesCleartextTraffic="true">
+        <activity android:name=".MineAc">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".ScoreRankListAc" />
+        <activity android:name=".MyScoreAc" />
+        <activity android:name=".SettingAc" />
+        <activity android:name=".AboutUsAc" />
+        <activity android:name=".MyCollectAc" />
+        <activity android:name=".OpenSourceAc" />
+        <activity android:name=".AboutAuthorAc" />
+        <activity android:name=".MyShareAc" />
+        <activity android:name=".ShareArticleAc" />
+    </application>
+</manifest>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.test.mine">
+
+    <application>
+        <activity android:name=".ScoreRankListAc" />
+        <activity android:name=".MyScoreAc" />
+        <activity android:name=".SettingAc" />
+        <activity android:name=".AboutUsAc" />
+        <activity android:name=".MyCollectAc" />
+        <activity android:name=".OpenSourceAc" />
+        <activity android:name=".AboutAuthorAc" />
+        <activity android:name=".MyShareAc" />
+        <activity android:name=".ShareArticleAc" />
+        <activity android:name=".MineAc" />
+        <activity android:name=".LanguageSetAc" />
+    </application>
+</manifest>
